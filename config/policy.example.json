@@ -1,0 +1,43 @@
+{
+  "version": "2026-09-23",
+  "input": {
+    "supported_extensions": [".wav"],
+    "required_sample_rates_hz": [16000, 22050, 24000, 44100, 48000],
+    "require_mono": false
+  },
+  "hard_reject": {
+    "min_duration_s": 0.35,
+    "max_duration_s": 45.0,
+    "min_rms_dbfs": -52.0,
+    "max_rms_dbfs": -8.0,
+    "max_peak_dbfs": -0.05,
+    "max_clipping_ratio": 0.0005,
+    "max_dc_offset": 0.02,
+    "max_silence_ratio": 0.70
+  },
+  "review": {
+    "min_duration_s": 0.60,
+    "max_silence_ratio": 0.45,
+    "max_clipping_ratio": 0.0001,
+    "min_rms_dbfs": -42.0
+  },
+  "sampling": {
+    "seed": 20260923,
+    "heavy_model_rate": 0.02,
+    "human_audit_rate": 0.005,
+    "always_heavy_if_review": true
+  },
+  "optional_metrics": {
+    "vad": { "device": "cpu", "scope": "routed" },
+    "asr": { "device": "gpu", "scope": "routed" },
+    "dnsmos": { "device": "cpu", "scope": "routed" },
+    "mos": { "device": "gpu", "scope": "routed" },
+    "speaker_similarity": { "device": "gpu", "scope": "routed" }
+  },
+  "routing": {
+    "mos_review_below": 3.4,
+    "mos_reject_below": 2.8,
+    "max_normalized_wer": 0.12,
+    "min_speaker_cosine": 0.72
+  }
+}

@@ -1,0 +1,1 @@
+{"audio_id":"example-0001","path":"/replace/with/audio.wav","expected_text":"Merhaba dünya.","language":"tr","generator":"example-tts","generator_version":"0.1.0","voice_id":"tr_demo_01","metadata":{"batch_id":"demo"}}
