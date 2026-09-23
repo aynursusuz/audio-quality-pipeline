@@ -4,15 +4,17 @@ A fast, auditable filter for generated and recorded speech/audio datasets. It is
 designed for millions of files: low-cost CPU checks run first, and model-based
 metrics run only when explicitly selected.
 
-## What runs by default
+## Two ways to use this repository
 
-The default command uses **CPU only**. It reads PCM WAV files once and checks:
+1. **Fast filter — ready now.** The default command uses **CPU only**. It reads PCM WAV files once and checks:
 
 - invalid files, duration, sample rate, and channel count;
 - silence, clipping, loudness, DC offset, and exact duplicates;
 - deterministic routing to `accept`, `review`, or `reject`.
 
-No model is downloaded or loaded by default.
+2. **Optional quality metrics.** Select only MOS and/or speaker similarity when you need model-based scoring. These metrics run in a separate command, so the fast filter stays lightweight.
+
+No model is downloaded or loaded by the fast filter.
 
 ## Quick start
 
@@ -45,35 +47,33 @@ audio-quality-pipeline \
 memory use. Start with 4–8 workers and increase only after measuring storage
 throughput.
 
+The output is `decisions.jsonl`: one decision per audio file with a status,
+reason codes, signal values, and duplicate information.
+
 ## Metrics and hardware
 
-Choose metrics with `--metrics`; an empty selection is the default. `routed`
-means review files plus a stable sample of accepted files.
+Metrics are always opt-in. The fast filter does not run a metric unless it is
+named with `--metrics`.
 
 <table>
   <thead>
-    <tr><th>Metric</th><th>Availability</th><th>Recommended device</th><th>Purpose</th></tr>
+    <tr><th>Metric</th><th>Ready to run</th><th>Recommended device</th><th>Purpose</th></tr>
   </thead>
   <tbody>
-    <tr><td>VAD</td><td>Scheduled job</td><td>CPU</td><td>Speech coverage and silence boundaries</td></tr>
-    <tr><td>ASR</td><td>Scheduled job</td><td>GPU recommended; CPU supported</td><td>Transcript and language validation</td></tr>
-    <tr><td>DNSMOS</td><td>Scheduled job</td><td>CPU</td><td>Noise and artifact proxy</td></tr>
-    <tr><td>MOS (UTMOSv2)</td><td>Worker included</td><td>GPU recommended; CPU supported</td><td>Naturalness ranking</td></tr>
-    <tr><td>Speaker similarity (ECAPA-TDNN)</td><td>Worker included</td><td>GPU recommended; CPU supported</td><td>Consented voice matching and duplicate confirmation</td></tr>
+    <tr><td>Core signal checks</td><td>Yes, default command</td><td>CPU</td><td>Format, duration, silence, loudness, clipping, DC offset, and exact duplicates</td></tr>
+    <tr><td>MOS (UTMOSv2)</td><td>Yes, included metric command</td><td>GPU recommended; CPU supported</td><td>Naturalness ranking</td></tr>
+    <tr><td>Speaker similarity (ECAPA-TDNN)</td><td>Yes, included metric command</td><td>GPU recommended; CPU supported</td><td>Consented voice matching and duplicate confirmation</td></tr>
   </tbody>
 </table>
 
 Use only the metrics needed for a run:
 
 ```bash
-# Schedule MOS and speaker-similarity jobs only.
+# Add MOS and speaker-similarity requests to eligible records.
 audio-quality-pipeline ... --metrics mos,speaker_similarity
 ```
 
-`--metrics all` schedules every listed metric but does not load any model in the
-main process. MOS and speaker similarity run with the included metric worker;
-VAD, ASR, and DNSMOS are intentionally separate worker contracts so they can
-scale independently.
+Then run the included metric command. It processes only the requested records.
 
 ```bash
 audio-quality-metrics \
@@ -89,6 +89,14 @@ MOS is a ranking/review signal, not a fixed global rejection threshold. Calibrat
 thresholds per language, source, and duration with human labels. Speaker
 similarity requires consented enrollment audio; embeddings and enrollment paths
 are excluded from output.
+
+### Advanced integrations
+
+VAD, ASR, and DNSMOS are not advertised as ready-to-run commands because this
+repository does not include their executors yet. You can request them with
+`--metrics vad,asr,dnsmos`; the fast filter writes the selected work items to
+`decisions.jsonl` without loading any model. Connect a dedicated executor only
+when those metrics are needed.
 
 ## Scale and privacy
 
