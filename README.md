@@ -53,16 +53,20 @@ reason codes, signal values, and duplicate information.
 ## Metrics and hardware
 
 Metrics are always opt-in. The fast filter does not run a metric unless it is
-named with `--metrics`.
+named with `--metrics`. The included metric command executes MOS and speaker
+similarity; VAD, ASR, and DNSMOS use separate executors.
 
 <table>
   <thead>
-    <tr><th>Metric</th><th>Device</th><th>Purpose</th></tr>
+    <tr><th>Metric</th><th>Device</th></tr>
   </thead>
   <tbody>
-    <tr><td>Core checks</td><td>CPU</td><td>Format, duration, silence, loudness, clipping, DC offset, and exact duplicates</td></tr>
-    <tr><td>MOS (UTMOSv2)</td><td>GPU recommended; CPU supported</td><td>Naturalness ranking</td></tr>
-    <tr><td>Speaker similarity (ECAPA-TDNN)</td><td>GPU recommended; CPU supported</td><td>Consented voice matching and duplicate confirmation</td></tr>
+    <tr><td>Core checks</td><td>CPU</td></tr>
+    <tr><td>VAD</td><td>CPU</td></tr>
+    <tr><td>ASR</td><td>GPU recommended; CPU supported</td></tr>
+    <tr><td>DNSMOS</td><td>CPU</td></tr>
+    <tr><td>MOS (UTMOSv2)</td><td>GPU recommended; CPU supported</td></tr>
+    <tr><td>Speaker similarity (ECAPA-TDNN)</td><td>GPU recommended; CPU supported</td></tr>
   </tbody>
 </table>
 
@@ -92,11 +96,8 @@ are excluded from output.
 
 ### Advanced integrations
 
-VAD, ASR, and DNSMOS are not advertised as ready-to-run commands because this
-repository does not include their executors yet. You can request them with
-`--metrics vad,asr,dnsmos`; the fast filter writes the selected work items to
-`decisions.jsonl` without loading any model. Connect a dedicated executor only
-when those metrics are needed.
+Use `--metrics vad,asr,dnsmos` to add these metrics to `decisions.jsonl`; run
+their separate executors only when needed.
 
 ## Scale and privacy
 
