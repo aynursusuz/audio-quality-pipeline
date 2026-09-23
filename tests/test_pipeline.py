@@ -12,6 +12,7 @@ from audio_quality_pipeline.metric_runner import (
     _stable_seed,
     iter_metric_tasks,
     load_enrollments,
+    load_reference_texts,
 )
 from audio_quality_pipeline.metrics import parse_metric_selection, scheduled_metric_jobs
 from audio_quality_pipeline.models import AudioRecord
@@ -242,6 +243,47 @@ def test_enrollment_paths_are_loaded_from_private_mapping(tmp_path: Path) -> Non
         '{"audio_id":"a","enrollment_path":"/private/enrollment.wav"}\n', encoding="utf-8"
     )
     assert load_enrollments(enrollment_path) == {"a": Path("/private/enrollment.wav")}
+
+
+def test_metric_tasks_keep_private_reference_and_enrollment_mappings_separate(
+    tmp_path: Path,
+) -> None:
+    decisions = tmp_path / "decisions.jsonl"
+    write_jsonl(
+        decisions,
+        iter(
+            [
+                {
+                    "audio_id": "a",
+                    "path": "/private/a.wav",
+                    "metric_jobs": [
+                        {"metric": "asr", "device": "gpu"},
+                        {"metric": "speaker_similarity", "device": "gpu"},
+                    ],
+                }
+            ]
+        ),
+    )
+    tasks = list(
+        iter_metric_tasks(
+            decisions,
+            ("asr", "speaker_similarity"),
+            {"a": Path("/private/enrollment.wav")},
+            {"a": "expected words"},
+        )
+    )
+    assert tasks[0].expected_text == "expected words"
+    assert tasks[0].enrollment_path is None
+    assert tasks[1].expected_text is None
+    assert tasks[1].enrollment_path == Path("/private/enrollment.wav")
+
+
+def test_reference_texts_are_loaded_from_private_mapping(tmp_path: Path) -> None:
+    reference_path = tmp_path / "references.jsonl"
+    reference_path.write_text(
+        '{"audio_id":"a","expected_text":"expected words"}\n', encoding="utf-8"
+    )
+    assert load_reference_texts(reference_path) == {"a": "expected words"}
 
 
 def test_metric_sampling_seed_is_stable_per_audio_id() -> None:

@@ -22,8 +22,9 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.6"]
-vad = ["onnxruntime>=1.17", "silero-vad>=5.1"]
-asr = ["faster-whisper>=1.1"]
+vad = ["silero-vad>=6.2"]
+asr = ["faster-whisper>=1.2"]
+dnsmos = ["torchmetrics>=1.8", "onnxruntime>=1.23", "librosa>=0.11", "requests>=2.32"]
 speaker = ["speechbrain>=1.0", "torch>=2.2", "torchaudio>=2.2"]
 
 [project.scripts]

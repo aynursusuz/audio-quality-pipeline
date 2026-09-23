@@ -25,11 +25,13 @@ Alert on distribution shifts, missing partitions, new reason-code spikes or L2 c
 ## CPU/GPU worker boundary
 
 The L0/L1 CLI is CPU-only and never imports optional ML dependencies. It writes
-`metric_jobs` only when the caller explicitly selects `--metrics`. A dispatcher
-must split those records by `device` and metric, then invoke the model-specific
-worker. CPU jobs should use bounded process pools; GPU jobs should be duration-
-bucketed and batched. A worker failure returns a review/retry record, never an
-implicit acceptance.
+`metric_jobs` only when the caller explicitly selects `--metrics`. The metric
+CLI reads those jobs and executes only the requested metrics, creating one
+runner per metric/device pair. For production scale, partition the jobs by
+metric and device before invoking the metric CLI: use bounded CPU process pools
+and duration-bucketed GPU batches. Metric failures are emitted as error rows;
+the downstream decision service must route them to review/retry and never
+implicitly accept them.
 
 ## Failure handling
 

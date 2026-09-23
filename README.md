@@ -12,7 +12,7 @@ metrics run only when explicitly selected.
 - silence, clipping, loudness, DC offset, and exact duplicates;
 - deterministic routing to `accept`, `review`, or `reject`.
 
-2. **Optional quality metrics.** Select only MOS and/or speaker similarity when you need model-based scoring. These metrics run in a separate command, so the fast filter stays lightweight.
+2. **Optional quality metrics.** Select only the metrics needed for a run. They use a separate command, so the fast filter stays lightweight.
 
 No model is downloaded or loaded by the fast filter.
 
@@ -52,9 +52,8 @@ reason codes, signal values, and duplicate information.
 
 ## Metrics and hardware
 
-Metrics are always opt-in. The fast filter does not run a metric unless it is
-named with `--metrics`. The included metric command executes MOS and speaker
-similarity; VAD, ASR, and DNSMOS use separate executors.
+Metrics are always opt-in. The fast filter does not load a model. The metric
+command runs only the metrics explicitly named with `--metrics`.
 
 <table>
   <thead>
@@ -70,16 +69,26 @@ similarity; VAD, ASR, and DNSMOS use separate executors.
   </tbody>
 </table>
 
-Use only the metrics needed for a run:
+Install and run only the metrics needed for a run:
 
 ```bash
-# Add MOS and speaker-similarity requests to eligible records.
-audio-quality-pipeline ... --metrics mos,speaker_similarity
+pip install '.[vad,asr,dnsmos]'
+
+audio-quality-pipeline ... --metrics vad,asr,dnsmos
+
+audio-quality-metrics \
+  --decisions artifacts/decisions.jsonl \
+  --output artifacts/metric-results.jsonl \
+  --metrics vad,asr,dnsmos \
+  --model-cache /private/model-cache
 ```
 
-Then run the included metric command. It processes only the requested records.
+For MOS and speaker similarity, install their dependency and provide the
+required private input files:
 
 ```bash
+pip install '.[speaker]'
+
 audio-quality-metrics \
   --decisions artifacts/decisions.jsonl \
   --output artifacts/metric-results.jsonl \
@@ -94,10 +103,9 @@ thresholds per language, source, and duration with human labels. Speaker
 similarity requires consented enrollment audio; embeddings and enrollment paths
 are excluded from output.
 
-### Advanced integrations
-
-Use `--metrics vad,asr,dnsmos` to add these metrics to `decisions.jsonl`; run
-their separate executors only when needed.
+ASR stores detected language and transcript length. Supply a private
+`--reference-manifest` only when normalized WER is required; transcripts are not
+written to the result file.
 
 ## Scale and privacy
 
