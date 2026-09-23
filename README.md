@@ -1,5 +1,14 @@
 # Audio Quality Pipeline
 
+<p>
+  <a href="https://github.com/aynursusuz/audio-quality-pipeline/actions/workflows/ci.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/aynursusuz/audio-quality-pipeline/ci.yml?branch=main&label=checks&style=flat-square" alt="Checks">
+  </a>
+  <img src="https://img.shields.io/badge/python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.11 or newer">
+  <img src="https://img.shields.io/badge/license-MIT-2EA44F?style=flat-square" alt="MIT License">
+  <img src="https://img.shields.io/badge/input-PCM%20WAV-6F42C1?style=flat-square" alt="PCM WAV input">
+</p>
+
 A fast, auditable filter for generated and recorded speech/audio datasets. It is
 designed for millions of files: low-cost CPU checks run first, and model-based
 metrics run only when explicitly selected.
@@ -55,19 +64,14 @@ reason codes, signal values, and duplicate information.
 Metrics are always opt-in. The fast filter does not load a model. The metric
 command runs only the metrics explicitly named with `--metrics`.
 
-<table>
-  <thead>
-    <tr><th>Metric</th><th>Device</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Core checks</td><td>CPU</td></tr>
-    <tr><td>VAD</td><td>CPU</td></tr>
-    <tr><td>ASR</td><td>GPU recommended; CPU supported</td></tr>
-    <tr><td>DNSMOS</td><td>CPU</td></tr>
-    <tr><td>MOS (UTMOSv2)</td><td>GPU recommended; CPU supported</td></tr>
-    <tr><td>Speaker similarity (ECAPA-TDNN)</td><td>GPU recommended; CPU supported</td></tr>
-  </tbody>
-</table>
+| Metric | Device | Output |
+| --- | --- | --- |
+| Core checks | 🟢 CPU | validity, duration, loudness, clipping, duplicates |
+| VAD | 🟢 CPU | speech coverage and boundaries |
+| ASR | 🟣 GPU recommended · CPU supported | detected language and optional WER |
+| DNSMOS | 🟢 CPU | speech, noise, background and overall MOS |
+| MOS (UTMOSv2) | 🟣 GPU recommended · CPU supported | naturalness score |
+| Speaker similarity (ECAPA-TDNN) | 🟣 GPU recommended · CPU supported | consented voice-match score |
 
 Install and run only the metrics needed for a run:
 
