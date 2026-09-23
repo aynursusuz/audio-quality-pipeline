@@ -4,19 +4,19 @@ import sys
 import wave
 from pathlib import Path
 
-from synthetic_audio_qc.cli import main
-from synthetic_audio_qc.dedup import ExactDeduplicator
-from synthetic_audio_qc.io import iter_audio_directory, write_jsonl
-from synthetic_audio_qc.metric_runner import (
+from audio_quality_pipeline.cli import main
+from audio_quality_pipeline.dedup import ExactDeduplicator
+from audio_quality_pipeline.io import iter_audio_directory, write_jsonl
+from audio_quality_pipeline.metric_runner import (
     _file_sha256,
     _stable_seed,
     iter_metric_tasks,
     load_enrollments,
 )
-from synthetic_audio_qc.metrics import parse_metric_selection, scheduled_metric_jobs
-from synthetic_audio_qc.models import AudioRecord
-from synthetic_audio_qc.pipeline import inspect_record, iter_feature_extractions
-from synthetic_audio_qc.policy import Policy
+from audio_quality_pipeline.metrics import parse_metric_selection, scheduled_metric_jobs
+from audio_quality_pipeline.models import AudioRecord
+from audio_quality_pipeline.pipeline import inspect_record, iter_feature_extractions
+from audio_quality_pipeline.policy import Policy
 
 
 def _write_tone(
@@ -195,7 +195,7 @@ def test_cli_accepts_directory_input(tmp_path: Path, monkeypatch) -> None:
         sys,
         "argv",
         [
-            "synthetic-audio-qc",
+            "audio-quality-pipeline",
             "--input-dir",
             str(tmp_path),
             "--policy",

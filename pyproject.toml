@@ -3,9 +3,9 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "synthetic-audio-qc"
+name = "audio-quality-pipeline"
 version = "0.1.0"
-description = "A cost-aware, auditable quality-control pipeline for synthetic speech at scale."
+description = "A cost-aware, auditable quality-control pipeline for audio at scale."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
@@ -27,8 +27,8 @@ asr = ["faster-whisper>=1.1"]
 speaker = ["speechbrain>=1.0", "torch>=2.2", "torchaudio>=2.2"]
 
 [project.scripts]
-synthetic-audio-qc = "synthetic_audio_qc.cli:main"
-synthetic-audio-metrics = "synthetic_audio_qc.metric_cli:main"
+audio-quality-pipeline = "audio_quality_pipeline.cli:main"
+audio-quality-metrics = "audio_quality_pipeline.metric_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

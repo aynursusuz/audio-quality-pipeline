@@ -1,9 +1,10 @@
-# Synthetic Audio QC
+# Audio Quality Pipeline
 
-An auditable, cost-aware quality-control baseline for synthetic speech datasets.
-It is designed for millions of clips: deterministic checks run first, while neural
-inference is restricted to ambiguous records and a stable sample. Every decision
-is reproducible from an immutable manifest, versioned policy and model registry.
+An auditable, cost-aware quality-control baseline for speech and audio datasets.
+It supports generated and recorded audio at millions-of-clips scale: deterministic
+checks run first, while neural inference is restricted to ambiguous records and a
+stable sample. Every decision is reproducible from an immutable manifest,
+versioned policy and model registry.
 
 ## Pipeline
 
@@ -30,11 +31,12 @@ L3 calibrated decision + stratified human audit ──> release manifest
 ## Quick start
 
 ```bash
-cd synthetic-audio-qc
+git clone https://github.com/aynursusuz/audio-quality-pipeline.git
+cd audio-quality-pipeline
 python -m venv .venv && source .venv/bin/activate
 pip install '.[dev]'
 
-synthetic-audio-qc \
+audio-quality-pipeline \
   --manifest examples/manifest.jsonl \
   --policy config/policy.example.json \
   --dedup-db artifacts/release-2026-09.sqlite \
@@ -46,7 +48,7 @@ named explicitly. This command schedules only MOS and speaker-similarity jobs fo
 eligible records; it does not load either model in the L0/L1 process:
 
 ```bash
-synthetic-audio-qc ... --metrics mos,speaker_similarity
+audio-quality-pipeline ... --metrics mos,speaker_similarity
 ```
 
 To explicitly schedule every current optional metric, use `--metrics all`.
@@ -57,7 +59,7 @@ empty selection is the safe default. The repository includes a private-worker
 CLI for the two release-gate metrics, MOS and speaker similarity:
 
 ```bash
-synthetic-audio-metrics \
+audio-quality-metrics \
   --decisions artifacts/decisions.jsonl \
   --output artifacts/metric-results.jsonl \
   --metrics mos,speaker_similarity \
@@ -90,8 +92,8 @@ The manifest is NDJSON. Keep it append-only and locate audio in object storage o
 For an ad-hoc folder without a manifest, use stable recursive discovery:
 
 ```bash
-synthetic-audio-qc \
-  --input-dir /data/synthetic-audio \
+audio-quality-pipeline \
+  --input-dir /data/audio \
   --policy config/policy.example.json \
   --dedup-db artifacts/release.sqlite \
   --output artifacts/decisions.jsonl \
@@ -145,7 +147,7 @@ duration against human labels.
 
 Keep worker output uniform: `audio_id, model_name, model_revision, device, score,
 threshold_set, decision, latency_ms, error`. Store raw scores separately from
-final decisions so thresholds can be replayed. `synthetic-audio-metrics` executes
+final decisions so thresholds can be replayed. `audio-quality-metrics` executes
 only `mos` and `speaker_similarity`; VAD, ASR and DNSMOS remain explicit job
 contracts so they can be deployed in independently scaled workers without
 coupling their dependencies to the release-gate GPU worker.
@@ -180,7 +182,7 @@ premature binary gate.
 ```text
 config/                  versioned policy example
 docs/                    research and operations
-src/synthetic_audio_qc/  pipeline implementation
+src/audio_quality_pipeline/  pipeline implementation
 tests/                   deterministic unit tests
 .github/workflows/       CI
 ```

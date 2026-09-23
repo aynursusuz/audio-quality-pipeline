@@ -11,7 +11,7 @@ from .policy import Policy
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Tier-0 synthetic audio quality control")
+    parser = argparse.ArgumentParser(description="Tier-0 audio quality control")
     inputs = parser.add_mutually_exclusive_group(required=True)
     inputs.add_argument("--manifest", type=Path, help="Input JSONL manifest")
     inputs.add_argument("--input-dir", type=Path, help="Directory of supported audio files")
