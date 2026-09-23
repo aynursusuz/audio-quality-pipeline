@@ -57,12 +57,12 @@ named with `--metrics`.
 
 <table>
   <thead>
-    <tr><th>Metric</th><th>Ready to run</th><th>Recommended device</th><th>Purpose</th></tr>
+    <tr><th>Metric</th><th>Device</th><th>Purpose</th></tr>
   </thead>
   <tbody>
-    <tr><td>Core signal checks</td><td>Yes, default command</td><td>CPU</td><td>Format, duration, silence, loudness, clipping, DC offset, and exact duplicates</td></tr>
-    <tr><td>MOS (UTMOSv2)</td><td>Yes, included metric command</td><td>GPU recommended; CPU supported</td><td>Naturalness ranking</td></tr>
-    <tr><td>Speaker similarity (ECAPA-TDNN)</td><td>Yes, included metric command</td><td>GPU recommended; CPU supported</td><td>Consented voice matching and duplicate confirmation</td></tr>
+    <tr><td>Core checks</td><td>CPU</td><td>Format, duration, silence, loudness, clipping, DC offset, and exact duplicates</td></tr>
+    <tr><td>MOS (UTMOSv2)</td><td>GPU recommended; CPU supported</td><td>Naturalness ranking</td></tr>
+    <tr><td>Speaker similarity (ECAPA-TDNN)</td><td>GPU recommended; CPU supported</td><td>Consented voice matching and duplicate confirmation</td></tr>
   </tbody>
 </table>
 
